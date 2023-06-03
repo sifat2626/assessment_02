@@ -2,14 +2,19 @@ import React, {useState} from 'react';
 import Jumbotron from "../../components/Jumbotron";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {useAuth} from "../../context/auth";
+import {useNavigate} from "react-router-dom";
 
 const Register = () => {
     const [name,setName] = useState('');
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
+    // const [auth,setAuth] = useAuth();
+    const navigate = useNavigate();
     const url = `http://localhost:8000/api/v1/register`
 
     const handleSubmit = async (e)=> {
+
         e.preventDefault();
         try{
             const {data} = await axios.post(
@@ -20,8 +25,16 @@ const Register = () => {
                 }
             )
             console.log(data)
+            if (data?.error) {
+                toast.error(data.error);
+            } else {
+                // localStorage.setItem("auth", JSON.stringify(data));
+                // setAuth({ ...auth, token: data.token, user: data.user });
+                toast.success("Registration successful");
+                navigate("/dashboard/user");
+            }
         }catch (error){
-            toast.error(error)
+            toast.error(`Registration unsuccessful`)
         }
     }
     return (
